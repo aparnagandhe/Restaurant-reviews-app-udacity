@@ -1,44 +1,94 @@
-const cachedItems = [
-				'/restaurant-review/index.html',
-				'/restaurant-review/restaurant.html',
-				'/restaurant-review/data/restaurants.json',
-				'/restaurant-review/js/dbhelper.js',
-				'/restaurant-review/js/main.js',
-				'/restaurant-review/js/restaurant_info.js',
-				'/restaurant-review/js/sw_init.js',
-				'/restaurant-review/css/styles.css',
-				'/restaurant-review/img/1.jpg',
-				'/restaurant-review/img/2.jpg',
-				'/restaurant-review/img/3.jpg',
-				'/restaurant-review/img/4.jpg',
-				'/restaurant-review/img/5.jpg',
-				'/restaurant-review/img/6.jpg',
-				'/restaurant-review/img/7.jpg',
-				'/restaurant-review/img/8.jpg',
-				'/restaurant-review/img/9.jpg'
-				];
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('/sw.js').then(function(registration) {
+        // Registration was successful
+        //console.log('ServiceWorker registration successful with scope: ', registration.scope);
+      }, function(err) {
+        // registration failed :(
+        console.log('ServiceWorker registration failed: ', err);
+      });
+    });
+  }
+  
+/* 
+*  Inital cache minimim cache
+*  Ensure that if the page loads once the listner can at least see
+*  names addresses and have a little functionality.
+*/
 
-const version = 'v1';
+  var CACHE_NAME = 'restauraunt-reviews-cache';
+  var urlsToCache = [
+    '/',
+    '/css/styles.css',
+    '/js/main.js',
+    '/js/dbhelper.js',
+    '/js/restaurant_info.js',
+    '/data/restaurants.json',
+    'https://unpkg.com/leaflet@1.3.1/dist/leaflet.css',
+    'https://unpkg.com/leaflet@1.3.1/dist/leaflet.js'
+    
+  ];
 
-// Installs service worker and caches files
-self.addEventListener('install', (event) => {
-	console.log('Servive Worker Installing');
-	event.waitUntil(
-		caches.open(version).then( (cache) => {
-			return cache.addAll(cachedItems);
-		})
-	);
-});
 
-// Fetches Cached files
-self.addEventListener('fetch', (event) => {
-	event.respondWith(
-		caches.match(event.request)
-		.then( (res) => {
-			if (res) {
-				return res
-			} 
-			return fetch(event.request);
-		})
-	)
-});
+  self.addEventListener('install', function(event) {
+    event.waitUntil(
+      caches.open(CACHE_NAME)
+        .then(function(cache) {
+          console.log('Opened cache');
+          return cache.addAll(urlsToCache);
+        })
+    );
+  });
+
+  /* Basic fetch
+  *  Doesn't add browse content to the cache. 
+ 
+  self.addEventListener('fetch', function(event) {
+    event.respondWith(
+      caches.match(event.request)
+        .then(function(response) {
+          // Cache hit - return response
+          if (response) {
+            return response;
+          }
+          return fetch(event.request);
+        }
+      )
+    );
+  });
+   */
+
+
+  /* Advanced fetch
+  *  Adds browsed local content to the cache. 
+  *  This way if the browser goes off line the user can 
+  *  see things they previously visited.
+  */
+
+
+  self.addEventListener('fetch', function(event) {
+    event.respondWith(
+      caches.match(event.request)
+        .then(function(response) {
+          if (response) {
+            return response;
+          }
+  
+          return fetch(event.request).then(
+            function(response) {
+              if(!response || response.status !== 200 || response.type !== 'basic') {
+                return response;
+              }
+
+              var responseToCache = response.clone();
+  
+              caches.open(CACHE_NAME)
+                .then(function(cache) {
+                  cache.put(event.request, responseToCache);
+                });
+  
+              return response;
+            });
+        })
+      );
+  });
