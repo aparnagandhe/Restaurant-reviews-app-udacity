@@ -1,12 +1,10 @@
 // Service Worker Registration
-if('serviceWorker' in navigator) {
-	navigator.serviceWorker.register('./sw.js', { scope: '/restaurant-review/' })
-	.then((reg) => {
-		console.log('Service Worker Registration Successful', reg);
+if ('serviceWorker' in navigator) {
+	navigator.serviceWorker.register('./sw.js')
+	.then(function() {
+		console.log('Registration worked!');
 	})
-	.catch((err) => {
-		console.log('Service Worker Registration Unsuccessful', err);
-	})
-} else {
-	console.log('This browser does not support Service Workers.');
+	.catch(function() {
+		console.log('Registration failed!');
+	});
 }
