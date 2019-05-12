@@ -26,7 +26,7 @@ if ('serviceWorker' in navigator) {
     '/data/restaurants.json',
     'https://unpkg.com/leaflet@1.3.1/dist/leaflet.css',
     'https://unpkg.com/leaflet@1.3.1/dist/leaflet.js'
-    
+    'offline.html'
   ];
 
 
@@ -88,6 +88,9 @@ if ('serviceWorker' in navigator) {
                 });
   
               return response;
+            }.catch(function(){
+            // Return the offline message when the page cannot be loaded from cache or web
+            return caches.match('/offline.html'); 
             });
         })
       );
