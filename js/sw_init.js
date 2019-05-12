@@ -1,7 +1,7 @@
 // Service Worker Registration
 if ('serviceWorker' in navigator) {
 	window.addEventListener('load', function() {
-	navigator.serviceWorker.register('./sw.js', {scope: '/restaurant-review/' })
+	navigator.serviceWorker.register('./sw.js', {scope: '/restaurant-review/restaurant.html' })
 	.then(function() {
 		console.log('Registration worked!');
 	})
