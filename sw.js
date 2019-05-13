@@ -1,54 +1,45 @@
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open('restaurant-reviews-static-v1').then(cache => {
-      return cache.addAll([
-        '/',
+const cachedItems = [
+        './',
+				'/restaurant-review/index.html',
+				'/restaurant-review/restaurant.html',
+				'/restaurant-review/data/restaurants.json',
+				'/restaurant-review/js/dbhelper.js',
+				'/restaurant-review/js/main.js',
+				'/restaurant-review/js/restaurant_info.js',
+				'/restaurant-review/js/sw_init.js',
+				'/restaurant-review/css/styles.css',
+				'/restaurant-review/img/1.jpg',
+				'/restaurant-review/img/2.jpg',
+				'/restaurant-review/img/3.jpg',
+				'/restaurant-review/img/4.jpg',
+				'/restaurant-review/img/5.jpg',
+				'/restaurant-review/img/6.jpg',
+				'/restaurant-review/img/7.jpg',
+				'/restaurant-review/img/8.jpg',
+				'/restaurant-review/img/9.jpg'
+				];
 
-        /* CSS */
-        '/css/styles.css',
-        '/node_modules/normalize.css/normalize.css',
-        'https://unpkg.com/leaflet@1.3.1/dist/leaflet.css',
+const version = 'v1';
 
-        /* JS */
-        '/js/dbhelper.js',
-        '/js/main.js',
-        '/sw_init.js',
-
-        /* Data */
-        '/data/restaurants.json',
-
-        /* HTML */
-        '/index.html',
-        '/restaurant.html',
-
-        /* Img */
-        '/img/1.jpg',
-        '/img/2.jpg',
-        '/img/3.jpg',
-        '/img/4.jpg',
-        '/img/5.jpg',
-        '/img/6.jpg',
-        '/img/7.jpg',
-        '/img/8.jpg',
-        '/img/9.jpg',
-        '/img/10.jpg',
-      ]).then(err => {
-          console.log('All files have been cached!')
-        }).catch(err => {
-          console.log('All files have NOT been cached!')
-        });
-    })
-  );
+// Installs service worker and caches files
+self.addEventListener('install', (event) => {
+	console.log('Servive Worker Installing');
+	event.waitUntil(
+		caches.open(version).then( (cache) => {
+			return cache.addAll(cachedItems);
+		})
+	);
 });
 
-/**
- * Catches the fetch events and if the requested file is already in the cache,
- * it uses it, otherwise it fetches to the network.
- */
- self.addEventListener('fetch', function(event) {
-   event.respondWith(
-     caches.match(event.request).then(function(response) {
-       return response || fetch(event.request);
-     })
-   );
- });
+// Fetches Cached files
+self.addEventListener('fetch', (event) => {
+	event.respondWith(
+		caches.match(event.request)
+		.then( (res) => {
+			if (res) {
+				return res
+			} 
+			return fetch(event.request);
+		})
+	)
+});
