@@ -1,5 +1,5 @@
 const cachedItems = [
-        './',
+                                              './',
 				'/restaurant-review/index.html',
 				'/restaurant-review/restaurant.html',
 				'/restaurant-review/data/restaurants.json',
