@@ -1,4 +1,4 @@
-const cachedItems = [
+const cachedURLs = [
 				'./',
 	                        './index.html',
 				'./restaurant.html',
@@ -26,7 +26,7 @@ self.addEventListener('install', (event) => {
 	console.log('Servive Worker Installing');
 	event.waitUntil(
 		caches.open(version).then( (cache) => {
-			return cache.addAll(cachedItems);
+			return cache.addAll(cachedURLs);
 		})
 	);
 });
