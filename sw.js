@@ -6,7 +6,6 @@ self.addEventListener('install', event => {
 
         /* CSS */
         '/css/styles.css',
-        '/css/medium.css',
         '/node_modules/normalize.css/normalize.css',
         'https://unpkg.com/leaflet@1.3.1/dist/leaflet.css',
 
